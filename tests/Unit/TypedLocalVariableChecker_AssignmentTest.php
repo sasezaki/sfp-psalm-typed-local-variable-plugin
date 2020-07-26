@@ -4,7 +4,10 @@ namespace SfpTest\Psalm\TypedLocalVariablePlugin\Unit;
 
 use Psalm\IssueBuffer;
 
-final class TypedLocalVariableCheckerTest extends AbstractTestCase
+/**
+ * tests for standard in same scope
+ */
+final class TypedLocalVariableChecker_AssignmentTest extends AbstractTestCase
 {
     /**
      * @test
@@ -52,7 +55,7 @@ CODE
     /**
      * @test
      */
-    public function castAssignmentExpression() : void 
+    public function castAssignmentExpression() : void
     {
         $this->addFile(
             __METHOD__,
@@ -89,5 +92,33 @@ CODE
         $this->assertSame(1, IssueBuffer::getErrorCount());
         $issue = current(IssueBuffer::getIssuesData())[0];
         $this->assertSame('$x = "a";', trim($issue->snippet));
+    }
+
+    /**
+     * @test
+     *
+     * @todos
+     *  - variable var
+     */
+    public function more()
+    {
+
+        $this->markTestIncomplete();
+
+        $this->addFile(
+            __METHOD__,
+            <<<'CODE'
+<?php
+function () : void {
+    $foo = "bar";
+    $bar = 3;
+    $x = ${$foo};
+    $x = "a";
+};
+CODE
+        );
+
+        $this->analyzeFile(__METHOD__,  new \Psalm\Context());
+        // var_dump(IssueBuffer::getIssuesData());
     }
 }
